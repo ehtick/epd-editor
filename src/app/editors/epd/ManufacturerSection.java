@@ -30,6 +30,12 @@ import app.util.tables.TextModifier;
 
 class ManufacturerSection {
 
+	private static final String SITE = "Manufacturing site";
+	private static final String FACILITY = "Facility identifier";
+	private static final String STREET = "Street address";
+	private static final String COUNTRY = "Country code";
+	private static final String OLC = "OLC Location code";
+
 	private final EpdEditor editor;
 	private final List<EpdManufacturer> manufacturers;
 	private Composite parent;
@@ -83,8 +89,11 @@ class ManufacturerSection {
 			var comp = UI.sectionClient(section, tk);
 			UI.gridLayout(comp, 1);
 
-			contactRow(comp);
-			providingDataRow(comp);
+			var top = tk.createComposite(comp);
+			UI.gridData(top, true, false);
+			UI.gridLayout(top, 2, 10, 0);
+			contactRow(top);
+			providingDataRow(top);
 			createSiteTable(comp);
 
 			var del = Actions.create(
@@ -115,48 +124,40 @@ class ManufacturerSection {
 		}
 
 		private void createSiteTable(Composite comp) {
-			UI.formLabel(comp, tk, M.ManufacturingSites);
-			siteTable = Tables.createViewer(comp,
-				"Name",
-				"Facility identifier",
-				"Street address",
-				"Country code",
-				"OLC Location code");
+			siteTable = Tables.createViewer(
+				comp, SITE, FACILITY, STREET, COUNTRY, OLC);
 			siteTable.setLabelProvider(new SiteLabel());
 			Tables.bindColumnWidths(siteTable, 0.2, 0.2, 0.2, 0.2, 0.2);
 			UI.gridData(siteTable.getControl(), true, true).heightHint = 100;
 
 			var ms = new ModifySupport<EpdSite>(siteTable);
-			ms.bind("Name", new SiteModifier(SiteModifier.NAME, m));
-			ms.bind("Facility identifier",
-				new SiteModifier(SiteModifier.FACILITY, m));
-			ms.bind("Street address",
-				new SiteModifier(SiteModifier.STREET, m));
-			ms.bind("Country code",
-				new SiteModifier(SiteModifier.COUNTRY, m));
-			ms.bind("OLC Location code",
-				new SiteModifier(SiteModifier.OLC, m));
+			ms.bind(SITE, new SiteModifier(SITE))
+				.bind(FACILITY, new SiteModifier(FACILITY))
+				.bind(STREET, new SiteModifier(STREET))
+				.bind(COUNTRY, new SiteModifier(COUNTRY))
+				.bind(OLC, new SiteModifier(OLC));
 
-			var add = Actions.create(
-				M.Add, Icon.ADD.des(), this::addSite);
-			var rem = Actions.create(
-				M.Remove, Icon.DELETE.des(), this::removeSites);
+			var add = Actions.create(M.Add, Icon.ADD.des(), this::addSite);
+			var rem = Actions.create(M.Remove, Icon.DELETE.des(), this::removeSites);
 			Actions.bind(siteTable, add, rem);
-
 			siteTable.setInput(m.getSites());
 		}
 
 		private void addSite() {
-			var site = new EpdSite();
+			var site = new EpdSite().withName("New facility");
 			m.withSites().add(site);
 			siteTable.setInput(m.getSites());
 			editor.setDirty();
 		}
 
 		private void removeSites() {
-			var list = m.withSites();
+			var list = m.getSites();
+			if (list.isEmpty())
+				return;
 			for (var s : Viewers.getAllSelected(siteTable)) {
-				list.remove(s);
+				if (!(s instanceof EpdSite site))
+					continue;
+				list.remove(site);
 			}
 			siteTable.setInput(list);
 			editor.setDirty();
@@ -195,18 +196,10 @@ class ManufacturerSection {
 
 	private class SiteModifier extends TextModifier<EpdSite> {
 
-		static final String NAME = "Name";
-		static final String FACILITY = "Facility identifier";
-		static final String STREET = "Street address";
-		static final String COUNTRY = "Country code";
-		static final String OLC = "OLC Location code";
-
 		private final String field;
-		private final EpdManufacturer m;
 
-		SiteModifier(String field, EpdManufacturer m) {
+		SiteModifier(String field) {
 			this.field = field;
-			this.m = m;
 		}
 
 		@Override
@@ -214,7 +207,7 @@ class ManufacturerSection {
 			if (site == null)
 				return null;
 			return switch (field) {
-				case NAME -> site.getName();
+				case SITE -> site.getName();
 				case FACILITY -> site.getFacilityIdentifier();
 				case STREET -> site.getStreetAddress();
 				case COUNTRY -> site.getGeoCode();
@@ -231,7 +224,7 @@ class ManufacturerSection {
 			if (Objects.equals(old, text))
 				return;
 			switch (field) {
-				case NAME -> site.withName(text);
+				case SITE -> site.withName(text);
 				case FACILITY -> site.withFacilityIdentifier(text);
 				case STREET -> site.withStreetAddress(text);
 				case COUNTRY -> site.withGeoCode(text);
