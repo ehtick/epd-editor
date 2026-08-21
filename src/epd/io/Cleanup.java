@@ -218,6 +218,7 @@ public class Cleanup {
 		if (ext == null)
 			return true;
 		return ext.getOriginalEpds().isEmpty()
+				&& ext.getManufacturers().isEmpty()
 				&& ext.getAny().isEmpty();
 	}
 
