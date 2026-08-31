@@ -75,7 +75,7 @@ class InfoPage extends FormPage {
 		ServiceLifeSection.reference(editor, body, tk);
 		ServiceLifeSection.estimated(editor, body, tk);
 
-		new ManufacturerSection(editor).render(body, tk);
+		new ManufacturerSection(editor).render(body, tk, form);
 
 		form.reflow(true);
 	}

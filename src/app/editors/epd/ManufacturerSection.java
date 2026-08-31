@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.openlca.ilcd.commons.DataSetType;
 import org.openlca.ilcd.processes.epd.EpdManufacturer;
@@ -30,24 +31,20 @@ import app.util.tables.TextModifier;
 
 class ManufacturerSection {
 
-	private static final String SITE = "Manufacturing site";
-	private static final String FACILITY = "Facility identifier";
-	private static final String STREET = "Street address";
-	private static final String COUNTRY = "Country code";
-	private static final String OLC = "OLC Location code";
-
 	private final EpdEditor editor;
 	private final List<EpdManufacturer> manufacturers;
 	private Composite parent;
 	private FormToolkit tk;
+	private ScrolledForm form;
 
 	ManufacturerSection(EpdEditor editor) {
 		this.editor = editor;
 		this.manufacturers = Epds.withManufacturers(editor.epd);
 	}
 
-	void render(Composite body, FormToolkit tk) {
+	void render(Composite body, FormToolkit tk, ScrolledForm form) {
 		this.tk = tk;
+		this.form = form;
 		var section = UI.section(body, tk, M.Manufacturers);
 		parent = UI.sectionClient(section, tk);
 		UI.gridLayout(parent, 1);
@@ -57,6 +54,7 @@ class ManufacturerSection {
 		var add = Actions.create(M.Add, Icon.ADD.des(), this::add);
 		Actions.bind(section, add);
 		parent.layout(true, true);
+		form.reflow(true);
 	}
 
 	private void add() {
@@ -67,6 +65,7 @@ class ManufacturerSection {
 		manufacturers.add(m);
 		new SubSection(m);
 		parent.layout(true, true);
+		form.reflow(true);
 		editor.setDirty();
 	}
 
@@ -102,7 +101,7 @@ class ManufacturerSection {
 		}
 
 		private void contactRow(Composite comp) {
-			UI.formLabel(comp, tk, "Contact");
+			UI.formLabel(comp, tk, M.Contact);
 			var link = new RefLink(comp, tk, DataSetType.CONTACT);
 			link.setRef(m.getContact());
 			link.onChange(ref -> {
@@ -115,7 +114,7 @@ class ManufacturerSection {
 		}
 
 		private void providingDataRow(Composite comp) {
-			var cb = UI.formCheckBox(comp, tk, "Is providing data");
+			var cb = UI.formCheckBox(comp, tk, M.IsProvidingData);
 			cb.setSelection(m.isProvidingData());
 			Controls.onSelect(cb, _ -> {
 				m.withProvidingData(cb.getSelection());
@@ -124,18 +123,22 @@ class ManufacturerSection {
 		}
 
 		private void createSiteTable(Composite comp) {
-			siteTable = Tables.createViewer(
-				comp, SITE, FACILITY, STREET, COUNTRY, OLC);
+			siteTable = Tables.createViewer(comp,
+				M.ManufacturingSite,
+				M.FacilityIdentifier,
+				M.StreetAddress,
+				M.CountryCode,
+				M.OlcLocationCode);
 			siteTable.setLabelProvider(new SiteLabel());
 			Tables.bindColumnWidths(siteTable, 0.2, 0.2, 0.2, 0.2, 0.2);
 			UI.gridData(siteTable.getControl(), true, true).heightHint = 100;
 
 			var ms = new ModifySupport<EpdSite>(siteTable);
-			ms.bind(SITE, new SiteModifier(SITE))
-				.bind(FACILITY, new SiteModifier(FACILITY))
-				.bind(STREET, new SiteModifier(STREET))
-				.bind(COUNTRY, new SiteModifier(COUNTRY))
-				.bind(OLC, new SiteModifier(OLC));
+			ms.bind(M.ManufacturingSite, new SiteModifier(0))
+				.bind(M.FacilityIdentifier, new SiteModifier(1))
+				.bind(M.StreetAddress, new SiteModifier(2))
+				.bind(M.CountryCode, new SiteModifier(3))
+				.bind(M.OlcLocationCode, new SiteModifier(4));
 
 			var add = Actions.create(M.Add, Icon.ADD.des(), this::addSite);
 			var rem = Actions.create(M.Remove, Icon.DELETE.des(), this::removeSites);
@@ -167,6 +170,7 @@ class ManufacturerSection {
 			manufacturers.remove(m);
 			section.dispose();
 			parent.layout(true, true);
+			form.reflow(true);
 			editor.setDirty();
 		}
 	}
@@ -196,22 +200,22 @@ class ManufacturerSection {
 
 	private class SiteModifier extends TextModifier<EpdSite> {
 
-		private final String field;
+		private final int col;
 
-		SiteModifier(String field) {
-			this.field = field;
+		SiteModifier(int col) {
+			this.col = col;
 		}
 
 		@Override
 		protected String getText(EpdSite site) {
 			if (site == null)
 				return null;
-			return switch (field) {
-				case SITE -> site.getName();
-				case FACILITY -> site.getFacilityIdentifier();
-				case STREET -> site.getStreetAddress();
-				case COUNTRY -> site.getGeoCode();
-				case OLC -> site.getOlc();
+			return switch (col) {
+				case 0 -> site.getName();
+				case 1 -> site.getFacilityIdentifier();
+				case 2 -> site.getStreetAddress();
+				case 3 -> site.getGeoCode();
+				case 4 -> site.getOlc();
 				default -> null;
 			};
 		}
@@ -223,12 +227,12 @@ class ManufacturerSection {
 			var old = getText(site);
 			if (Objects.equals(old, text))
 				return;
-			switch (field) {
-				case SITE -> site.withName(text);
-				case FACILITY -> site.withFacilityIdentifier(text);
-				case STREET -> site.withStreetAddress(text);
-				case COUNTRY -> site.withGeoCode(text);
-				case OLC -> site.withOlc(text);
+			switch (col) {
+				case 0 -> site.withName(text);
+				case 1 -> site.withFacilityIdentifier(text);
+				case 2 -> site.withStreetAddress(text);
+				case 3 -> site.withGeoCode(text);
+				case 4 -> site.withOlc(text);
 			}
 			editor.setDirty();
 		}

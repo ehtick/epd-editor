@@ -37,6 +37,7 @@ public class M extends NLS {
 	public static String Contacts;
 	public static String ConversionFactor;
 	public static String Copyright;
+	public static String CountryCode;
 	public static String CreateANewEPD;
 	public static String CreateANewEPD_Description;
 
@@ -101,6 +102,7 @@ public class M extends NLS {
 	public static String Extras;
 
 	public static String FailedToGetDataStocks;
+	public static String FacilityIdentifier;
 	public static String File;
 	public static String Filter;
 	public static String Flow;
@@ -141,6 +143,7 @@ public class M extends NLS {
 	public static String IntendedApplications;
 	public static String InvalidName;
 	public static String InvalidReference;
+	public static String IsProvidingData;
 	public static String IsVendorSpecific;
 
 	public static String LCAMethodDetails;
@@ -154,6 +157,7 @@ public class M extends NLS {
 	public static String Logo;
 
 	public static String Manufacturers;
+	public static String ManufacturingSite;
 	public static String ManufacturingSites;
 	public static String MaterialProperties;
 	public static String MaterialProperties_Description;
@@ -185,6 +189,7 @@ public class M extends NLS {
 
 	public static String Open;
 	public static String OpenEditor;
+	public static String OlcLocationCode;
 	public static String OutputParameters;
 	public static String OverwriteExistingDataSets;
 
@@ -292,6 +297,7 @@ public class M extends NLS {
 	public static String Specific;
 	public static String StartPage;
 	public static String Status;
+	public static String StreetAddress;
 	public static String Subtype;
 	public static String Synchronize;
 	public static String SynchronizeReferenceDataOnStartup;
