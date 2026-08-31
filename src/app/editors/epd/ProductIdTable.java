@@ -57,7 +57,9 @@ class ProductIdTable {
 	}
 
 	protected void onCreate() {
-		var id = new EpdProductId();
+		var id = new EpdProductId()
+			.withType("Type of ID")
+			.withValue("The ID");
 		Epds.withProductIds(epd).add(id);
 		setInput();
 		editor.setDirty();

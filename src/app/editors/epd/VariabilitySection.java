@@ -1,5 +1,8 @@
 package app.editors.epd;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -21,6 +24,8 @@ import app.util.UI;
 import app.util.Viewers;
 
 class VariabilitySection {
+
+	private static final Object NONE = new Object();
 
 	private final EpdEditor editor;
 	private final Process epd;
@@ -50,21 +55,24 @@ class VariabilitySection {
 			public String getText(Object e) {
 				return e instanceof EpdManufacturerVariability.VariabilityType type
 					? Labels.get(type)
-					: super.getText(e);
+					: "";
 			}
 		});
-		manuCombo.setInput(EpdManufacturerVariability.VariabilityType.values());
+		manuCombo.setInput(nullable(EpdManufacturerVariability.VariabilityType.values()));
 		var manuInitType = (v != null && v.getManufacturerVariability() != null)
 			? v.getManufacturerVariability().getType()
 			: null;
-		if (manuInitType != null) {
-			manuCombo.setSelection(new StructuredSelection(manuInitType));
-		}
+		manuCombo.setSelection(new StructuredSelection(manuInitType != null ? manuInitType : NONE));
 		manuCombo.addSelectionChangedListener(e -> {
-			EpdManufacturerVariability.VariabilityType type = Viewers.getFirst(e.getSelection());
+			Object selected = Viewers.getFirst(e.getSelection());
+			EpdManufacturerVariability.VariabilityType type = selected instanceof EpdManufacturerVariability.VariabilityType t
+				? t
+				: null;
 			var variability = Epds.withVariability(epd);
 			var mv = variability.getManufacturerVariability();
 			if (mv == null) {
+				if (type == null)
+					return;
 				mv = new EpdManufacturerVariability();
 				variability.withManufacturerVariability(mv);
 			}
@@ -80,22 +88,25 @@ class VariabilitySection {
 			public String getText(Object e) {
 				return e instanceof EpdProductVariability.VariabilityType type
 					? Labels.get(type)
-					: super.getText(e);
+					: "";
 			}
 		});
 
-		prodCombo.setInput(EpdProductVariability.VariabilityType.values());
+		prodCombo.setInput(nullable(EpdProductVariability.VariabilityType.values()));
 		var pInitType = (v != null && v.getProductVariability() != null)
 			? v.getProductVariability().getType()
 			: null;
-		if (pInitType != null) {
-			prodCombo.setSelection(new StructuredSelection(pInitType));
-		}
+		prodCombo.setSelection(new StructuredSelection(pInitType != null ? pInitType : NONE));
 		prodCombo.addSelectionChangedListener(e -> {
-			EpdProductVariability.VariabilityType type = Viewers.getFirst(e.getSelection());
+			Object selected = Viewers.getFirst(e.getSelection());
+			EpdProductVariability.VariabilityType type = selected instanceof EpdProductVariability.VariabilityType t
+				? t
+				: null;
 			var variability = Epds.withVariability(epd);
 			var pv = variability.getProductVariability();
 			if (pv == null) {
+				if (type == null)
+					return;
 				pv = new EpdProductVariability();
 				variability.withProductVariability(pv);
 			}
@@ -147,21 +158,22 @@ class VariabilitySection {
 			public String getText(Object element) {
 				return element instanceof EpdVariationRange range
 					? Labels.get(range)
-					: super.getText(element);
+					: "";
 			}
 		});
-		manuRangeCombo.setInput(EpdVariationRange.values());
+		manuRangeCombo.setInput(nullable(EpdVariationRange.values()));
 		var manuInitRange = (v != null && v.getManufacturerVariability() != null)
 			? v.getManufacturerVariability().getRange()
 			: null;
-		if (manuInitRange != null) {
-			manuRangeCombo.setSelection(new StructuredSelection(manuInitRange));
-		}
+		manuRangeCombo.setSelection(new StructuredSelection(manuInitRange != null ? manuInitRange : NONE));
 		manuRangeCombo.addSelectionChangedListener(e -> {
-			EpdVariationRange range = Viewers.getFirst(e.getSelection());
+			Object selected = Viewers.getFirst(e.getSelection());
+			EpdVariationRange range = selected instanceof EpdVariationRange r ? r : null;
 			var variability = Epds.withVariability(epd);
 			var mv = variability.getManufacturerVariability();
 			if (mv == null) {
+				if (range == null)
+					return;
 				mv = new EpdManufacturerVariability();
 				variability.withManufacturerVariability(mv);
 			}
@@ -175,24 +187,24 @@ class VariabilitySection {
 		prodRangeCombo.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {
-				if (element instanceof EpdVariationRange range) {
-					return Labels.get(range);
-				}
-				return super.getText(element);
+				return element instanceof EpdVariationRange range
+					? Labels.get(range)
+					: "";
 			}
 		});
-		prodRangeCombo.setInput(EpdVariationRange.values());
+		prodRangeCombo.setInput(nullable(EpdVariationRange.values()));
 		var pInitRange = (v != null && v.getProductVariability() != null)
 			? v.getProductVariability().getRange()
 			: null;
-		if (pInitRange != null) {
-			prodRangeCombo.setSelection(new StructuredSelection(pInitRange));
-		}
+		prodRangeCombo.setSelection(new StructuredSelection(pInitRange != null ? pInitRange : NONE));
 		prodRangeCombo.addSelectionChangedListener(e -> {
-			EpdVariationRange range = Viewers.getFirst(e.getSelection());
+			Object selected = Viewers.getFirst(e.getSelection());
+			EpdVariationRange range = selected instanceof EpdVariationRange r ? r : null;
 			var variability = Epds.withVariability(epd);
 			var pv = variability.getProductVariability();
 			if (pv == null) {
+				if (range == null)
+					return;
 				pv = new EpdProductVariability();
 				variability.withProductVariability(pv);
 			}
@@ -211,5 +223,12 @@ class VariabilitySection {
 			.val(descriptions)
 			.edit(() -> Epds.withVariability(epd).withDescriptions())
 			.draw(textComp);
+	}
+
+	private static <T> Object[] nullable(T[] values) {
+		var list = new ArrayList<Object>();
+		list.add(NONE);
+		Collections.addAll(list, values);
+		return list.toArray();
 	}
 }
