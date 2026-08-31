@@ -187,6 +187,7 @@ public class Cleanup {
 		if (ext == null)
 			return true;
 		return ext.getPublicationDate() == null
+				&& ext.getExpirationDate() == null
 				&& ext.getAny().isEmpty();
 	}
 
