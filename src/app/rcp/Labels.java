@@ -70,9 +70,9 @@ public class Labels {
 		if (mtype == null)
 			return "";
 		return switch (mtype) {
-			case SINGLE_PRODUCTION_SITE -> "Single production site";
-			case SINGLE_MANUFACTURER_MULTIPLE_SITES -> "Single manufacturer with multiple production sites";
-			case MULTIPLE_MANUFACTURERS -> "Multiple manufacturers";
+			case SINGLE_PRODUCTION_SITE -> M.SingleProductionSite;
+			case SINGLE_MANUFACTURER_MULTIPLE_SITES -> M.SingleManufacturerMultipleSites;
+			case MULTIPLE_MANUFACTURERS -> M.MultipleManufacturers;
 		};
 	}
 
@@ -80,8 +80,8 @@ public class Labels {
 		if (ptype == null)
 			return "";
 		return switch (ptype) {
-			case SINGLE_PRODUCT -> "Single product";
-			case RANGE_OF_PRODUCTS -> "Range of products where variability is described";
+			case SINGLE_PRODUCT -> M.SingleProduct;
+			case RANGE_OF_PRODUCTS -> M.RangeOfProducts;
 		};
 	}
 
@@ -89,11 +89,11 @@ public class Labels {
 		if (range == null)
 			return "";
 		return switch (range) {
-			case A_LESS_THAN_2_5 -> "A - less than 2,5%";
-			case B_BETWEEN_2_5_AND_10 -> "B - between 2,5% and 10%";
-			case C_BETWEEN_10_AND_25 -> "C - between 10% and 25%";
-			case D_BETWEEN_25_AND_50 -> "D - between 25% and 50%";
-			case E_MORE_THAN_50 -> "E - more than 50%";
+			case A_LESS_THAN_2_5 -> M.VariationRangeA;
+			case B_BETWEEN_2_5_AND_10 -> M.VariationRangeB;
+			case C_BETWEEN_10_AND_25 -> M.VariationRangeC;
+			case D_BETWEEN_25_AND_50 -> M.VariationRangeD;
+			case E_MORE_THAN_50 -> M.VariationRangeE;
 		};
 	}
 

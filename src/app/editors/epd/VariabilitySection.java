@@ -32,23 +32,17 @@ class VariabilitySection {
 
 	void render(Composite body, FormToolkit tk) {
 		var comp = UI.formSection(body, tk, M.Variability);
-		UI.gridLayout(comp, 1);
+		UI.gridLayout(comp, 3);
 
-		// top: two columns for manufacturer and product variability
-		var top = tk.createComposite(comp);
-		UI.gridData(top, true, false);
-		var topGrid = UI.innerGrid(top, 3);
-		topGrid.horizontalSpacing = 10;
-		topGrid.verticalSpacing = 10;
-		topGrid.makeColumnsEqualWidth = true;
-		UI.filler(top, tk);
-		UI.formLabel(top, tk, M.ManufacturerVariability);
-		UI.formLabel(top, tk, M.ProductVariability);
+		// two columns for manufacturer and product variability
+		UI.filler(comp, tk);
+		UI.formLabel(comp, tk, M.ManufacturerVariability);
+		UI.formLabel(comp, tk, M.ProductVariability);
 		var v = Epds.getVariability(epd);
 
 		// type combos
-		UI.formLabel(top, tk, M.Type);
-		var manuCombo = new ComboViewer(top, SWT.READ_ONLY);
+		UI.formLabel(comp, tk, M.Type);
+		var manuCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		UI.gridData(manuCombo.getControl(), true, false);
 		manuCombo.setContentProvider(ArrayContentProvider.getInstance());
 		manuCombo.setLabelProvider(new LabelProvider() {
@@ -78,7 +72,7 @@ class VariabilitySection {
 			editor.setDirty();
 		});
 
-		var prodCombo = new ComboViewer(top, SWT.READ_ONLY);
+		var prodCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		UI.gridData(prodCombo.getControl(), true, false);
 		prodCombo.setContentProvider(ArrayContentProvider.getInstance());
 		prodCombo.setLabelProvider(new LabelProvider() {
@@ -110,11 +104,11 @@ class VariabilitySection {
 		});
 
 		//  variation (%)
-		UI.formLabel(top, tk, M.VariationPercent);
+		UI.formLabel(comp, tk, M.VariationPercent);
 		var manuVar = (v != null && v.getManufacturerVariability() != null)
 			? v.getManufacturerVariability().getVariation()
 			: null;
-		DoubleText.on(editor, top, tk)
+		DoubleText.on(editor, comp, tk)
 			.withInitial(manuVar)
 			.onChange(val -> {
 				var variability = Epds.withVariability(epd);
@@ -130,7 +124,7 @@ class VariabilitySection {
 		var prodVar = (v != null && v.getProductVariability() != null)
 			? v.getProductVariability().getVariation()
 			: null;
-		DoubleText.on(editor, top, tk)
+		DoubleText.on(editor, comp, tk)
 			.withInitial(prodVar)
 			.onChange(val -> {
 				var variability = Epds.withVariability(epd);
@@ -144,8 +138,8 @@ class VariabilitySection {
 			.render();
 
 		// range
-		UI.formLabel(top, tk, M.VariationRange);
-		var manuRangeCombo = new ComboViewer(top, SWT.READ_ONLY);
+		UI.formLabel(comp, tk, M.VariationRange);
+		var manuRangeCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		UI.gridData(manuRangeCombo.getControl(), true, false);
 		manuRangeCombo.setContentProvider(ArrayContentProvider.getInstance());
 		manuRangeCombo.setLabelProvider(new LabelProvider() {
@@ -175,7 +169,7 @@ class VariabilitySection {
 			editor.setDirty();
 		});
 
-		var prodRangeCombo = new ComboViewer(top, SWT.READ_ONLY);
+		var prodRangeCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		UI.gridData(prodRangeCombo.getControl(), true, false);
 		prodRangeCombo.setContentProvider(ArrayContentProvider.getInstance());
 		prodRangeCombo.setLabelProvider(new LabelProvider() {
@@ -206,11 +200,16 @@ class VariabilitySection {
 			editor.setDirty();
 		});
 
+		UI.formLabel(comp, tk, M.VariabilityDescription);
+		var textComp = tk.createComposite(comp);
+		UI.gridData(textComp, true, false).horizontalSpan = 2;
+		UI.innerGrid(textComp, 2);
+
 		var descriptions = v != null ? v.getDescriptions() : null;
 		LangText.builder(editor, tk)
-			.nextMulti(M.VariabilityDescription)
+			.nextMulti("")
 			.val(descriptions)
 			.edit(() -> Epds.withVariability(epd).withDescriptions())
-			.draw(comp);
+			.draw(textComp);
 	}
 }

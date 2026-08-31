@@ -161,6 +161,7 @@ public class M extends NLS {
 	public static String ModellingAndValidation;
 	public static String Module;
 	public static String Modules;
+	public static String MultipleManufacturers;
 
 	public static String Name;
 	public static String NetworkConnectionFailed;
@@ -213,6 +214,11 @@ public class M extends NLS {
 	public static String VariabilityType;
 	public static String VariationPercent;
 	public static String VariationRange;
+	public static String VariationRangeA;
+	public static String VariationRangeB;
+	public static String VariationRangeC;
+	public static String VariationRangeD;
+	public static String VariationRangeE;
 	public static String ProductSystem;
 	public static String Project;
 	public static String Products;
@@ -224,6 +230,7 @@ public class M extends NLS {
 	public static String QuantitativeProperties;
 	public static String QuantitativeReference;
 	public static String QuantitativeScenarioData;
+	public static String RangeOfProducts;
 
 	public static String ReferenceDataURL;
 	public static String ReferenceOriginalEPD;
@@ -277,6 +284,9 @@ public class M extends NLS {
 	public static String ShowDetails;
 	public static String ShowQMetadataEditor;
 	public static String ShowXMLInEditors;
+	public static String SingleManufacturerMultipleSites;
+	public static String SingleProduct;
+	public static String SingleProductionSite;
 	public static String Source;
 	public static String Sources;
 	public static String Specific;
