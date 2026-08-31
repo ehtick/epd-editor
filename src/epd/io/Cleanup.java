@@ -17,6 +17,8 @@ import org.openlca.ilcd.processes.epd.EpdInventoryMethodExtension;
 import org.openlca.ilcd.processes.epd.EpdPublicationExtension;
 import org.openlca.ilcd.processes.epd.EpdRepresentativenessExtension;
 import org.openlca.ilcd.processes.epd.EpdSafetyMargins;
+import org.openlca.ilcd.processes.epd.EpdScenarioData;
+import org.openlca.ilcd.processes.epd.EpdServiceLife;
 import org.openlca.ilcd.processes.epd.EpdTimeExtension;
 import org.openlca.ilcd.util.Epds;
 import org.openlca.ilcd.util.Flows;
@@ -96,6 +98,15 @@ public class Cleanup {
 				if (isEmpty(ext.getContentDeclaration())) {
 					ext.withContentDeclaration(null);
 				}
+				if (isEmpty(ext.getReferenceServiceLife())) {
+					ext.withReferenceServiceLife(null);
+				}
+				if (isEmpty(ext.getEstimatedServiceLife())) {
+					ext.withEstimatedServiceLife(null);
+				}
+				if (isEmpty(ext.getScenarioData())) {
+					ext.withScenarioData(null);
+				}
 			}
 		}
 
@@ -138,7 +149,8 @@ public class Cleanup {
 		return comGoal.getCommissioners().isEmpty()
 				&& comGoal.getIntendedApplications().isEmpty()
 				&& comGoal.getProject().isEmpty()
-				&& isEmpty(comGoal.getOther());
+				&& isEmpty(comGoal.getOther())
+				&& comGoal.getOtherAttributes().isEmpty();
 	}
 
 	private static boolean isEmpty(Time time) {
@@ -147,7 +159,8 @@ public class Cleanup {
 		return time.getDescription().isEmpty()
 				&& time.getReferenceYear() == null
 				&& time.getValidUntil() == null
-				&& isEmpty(time.getEpdExtension());
+				&& isEmpty(time.getEpdExtension())
+				&& time.getOtherAttributes().isEmpty();
 	}
 
 	private static boolean isEmpty(Geography geography) {
@@ -155,7 +168,8 @@ public class Cleanup {
 			return true;
 		return isEmpty(geography.getLocation())
 				&& geography.getSubLocations().isEmpty()
-				&& isEmpty(geography.getOther());
+				&& isEmpty(geography.getOther())
+				&& geography.getOtherAttributes().isEmpty();
 	}
 
 	private static boolean isEmpty(Technology technology) {
@@ -165,7 +179,9 @@ public class Cleanup {
 				&& technology.getDescription().isEmpty()
 				&& technology.getIncludedProcesses().isEmpty()
 				&& technology.getPictogram() == null
-				&& technology.getPictures().isEmpty();
+				&& technology.getPictures().isEmpty()
+				&& isEmpty(technology.getOther())
+				&& technology.getOtherAttributes().isEmpty();
 	}
 
 	private static boolean isEmpty(Location location) {
@@ -173,14 +189,17 @@ public class Cleanup {
 			return true;
 		return Strings.isNullOrEmpty(location.getCode())
 				&& location.getDescription().isEmpty()
-				&& isEmpty(location.getOther());
+				&& Strings.isNullOrEmpty(location.getLatitudeAndLongitude())
+				&& isEmpty(location.getOther())
+				&& location.getOtherAttributes().isEmpty();
 	}
 
 	private static boolean isEmpty(DataGenerator generator) {
 		if (generator == null)
 			return true;
 		return generator.getContacts().isEmpty()
-				&& isEmpty(generator.getOther());
+				&& isEmpty(generator.getOther())
+				&& generator.getOtherAttributes().isEmpty();
 	}
 
 	private static boolean isEmpty(EpdTimeExtension ext) {
@@ -202,6 +221,11 @@ public class Cleanup {
 				&& ext.getModuleEntries().isEmpty()
 				&& ext.getScenarios().isEmpty()
 				&& isEmpty(ext.getSafetyMargins())
+				&& ext.getProductIds().isEmpty()
+				&& isEmpty(ext.getReferenceServiceLife())
+				&& isEmpty(ext.getEstimatedServiceLife())
+				&& isEmpty(ext.getScenarioData())
+				&& ext.getSvhc() == null
 				&& ext.getAny().isEmpty();
 	}
 
@@ -213,6 +237,23 @@ public class Cleanup {
 		if (esm == null)
 			return true;
 		return esm.getValue() == null && esm.getDescription().isEmpty();
+	}
+
+	private static boolean isEmpty(EpdServiceLife serviceLife) {
+		if (serviceLife == null)
+			return true;
+		return serviceLife.getYears() == 0
+				&& serviceLife.getConditionFactors().isEmpty()
+				&& serviceLife.getStandards().isEmpty()
+				&& serviceLife.getDocumentations().isEmpty()
+				&& serviceLife.getComments().isEmpty();
+	}
+
+	private static boolean isEmpty(EpdScenarioData data) {
+		if (data == null)
+			return true;
+		return data.getUseStageData().isEmpty()
+				&& data.getEolData().isEmpty();
 	}
 
 	private static boolean isEmpty(EpdRepresentativenessExtension ext) {

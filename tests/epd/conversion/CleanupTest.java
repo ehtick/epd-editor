@@ -7,7 +7,9 @@ import javax.xml.datatype.DatatypeFactory;
 import org.junit.Test;
 import org.openlca.ilcd.processes.Process;
 import org.openlca.ilcd.processes.epd.EpdManufacturer;
+import org.openlca.ilcd.processes.epd.EpdProductId;
 import org.openlca.ilcd.processes.epd.EpdSite;
+import org.openlca.ilcd.processes.epd.EpdUseStageData;
 import org.openlca.ilcd.util.Epds;
 
 import epd.io.Cleanup;
@@ -49,5 +51,88 @@ public class CleanupTest {
 		assertNotNull(time);
 		assertNotNull(time.getEpdExtension());
 		assertEquals(date, Epds.getExpirationDate(epd));
+	}
+
+	@Test
+	public void keepsProductIds() {
+		var epd = new Process();
+		Epds.withProductIds(epd).add(new EpdProductId()
+				.withType("GTIN")
+				.withValue("1234567"));
+
+		Cleanup.on(epd);
+
+		var ext = Epds.getInfoExtension(epd);
+		assertNotNull(ext);
+		assertEquals(1, ext.getProductIds().size());
+		assertEquals("GTIN", ext.getProductIds().getFirst().getType());
+		assertEquals("1234567", ext.getProductIds().getFirst().getValue());
+	}
+
+	@Test
+	public void keepsReferenceServiceLife() {
+		var epd = new Process();
+		Epds.withReferenceServiceLife(epd).withYears(50);
+
+		Cleanup.on(epd);
+
+		var ext = Epds.getInfoExtension(epd);
+		assertNotNull(ext);
+		assertNotNull(ext.getReferenceServiceLife());
+		assertEquals(50d, ext.getReferenceServiceLife().getYears(), 1e-9);
+	}
+
+	@Test
+	public void keepsScenarioData() {
+		var epd = new Process();
+		Epds.withScenarioData(epd)
+				.withUseStageData()
+				.add(new EpdUseStageData());
+
+		Cleanup.on(epd);
+
+		var ext = Epds.getInfoExtension(epd);
+		assertNotNull(ext);
+		assertNotNull(ext.getScenarioData());
+		assertEquals(1, ext.getScenarioData().getUseStageData().size());
+	}
+
+	@Test
+	public void keepsSvhcDeclaration() {
+		var epd = new Process();
+		Epds.withSvhc(epd).withPresent(false);
+
+		Cleanup.on(epd);
+
+		var ext = Epds.getInfoExtension(epd);
+		assertNotNull(ext);
+		assertNotNull(ext.getSvhc());
+		assertFalse(ext.getSvhc().isPresent());
+	}
+
+	@Test
+	public void removesEmptyServiceLifeWithOtherData() {
+		var epd = new Process();
+		Epds.withReferenceServiceLife(epd);
+		Epds.withProductIds(epd).add(new EpdProductId()
+				.withType("GTIN")
+				.withValue("123"));
+
+		Cleanup.on(epd);
+
+		var ext = Epds.getInfoExtension(epd);
+		assertNotNull(ext);
+		assertNull(ext.getReferenceServiceLife());
+		assertEquals(1, ext.getProductIds().size());
+	}
+
+	@Test
+	public void removesEmptyInfoExtension() {
+		var epd = new Process();
+		Epds.withReferenceServiceLife(epd);
+
+		Cleanup.on(epd);
+
+		assertNull(Epds.getInfoExtension(epd));
 	}
 }
