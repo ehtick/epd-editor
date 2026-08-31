@@ -3,7 +3,10 @@ package app.rcp;
 import org.openlca.commons.Strings;
 import org.openlca.ilcd.commons.Category;
 import org.openlca.ilcd.commons.DataSetType;
+import org.openlca.ilcd.processes.epd.EpdManufacturerVariability;
+import org.openlca.ilcd.processes.epd.EpdProductVariability;
 import org.openlca.ilcd.processes.epd.EpdSubType;
+import org.openlca.ilcd.processes.epd.EpdVariationRange;
 
 import app.App;
 import app.M;
@@ -60,6 +63,37 @@ public class Labels {
 			case REPRESENTATIVE_DATASET -> M.Representative;
 			case SPECIFIC_DATASET -> M.Specific;
 			case TEMPLATE_DATASET -> M.Template;
+		};
+	}
+
+	public static String get(EpdManufacturerVariability.VariabilityType mtype) {
+		if (mtype == null)
+			return "";
+		return switch (mtype) {
+			case SINGLE_PRODUCTION_SITE -> "Single production site";
+			case SINGLE_MANUFACTURER_MULTIPLE_SITES -> "Single manufacturer with multiple production sites";
+			case MULTIPLE_MANUFACTURERS -> "Multiple manufacturers";
+		};
+	}
+
+	public static String get(EpdProductVariability.VariabilityType ptype) {
+		if (ptype == null)
+			return "";
+		return switch (ptype) {
+			case SINGLE_PRODUCT -> "Single product";
+			case RANGE_OF_PRODUCTS -> "Range of products where variability is described";
+		};
+	}
+
+	public static String get(EpdVariationRange range) {
+		if (range == null)
+			return "";
+		return switch (range) {
+			case A_LESS_THAN_2_5 -> "A - less than 2,5%";
+			case B_BETWEEN_2_5_AND_10 -> "B - between 2,5% and 10%";
+			case C_BETWEEN_10_AND_25 -> "C - between 10% and 25%";
+			case D_BETWEEN_25_AND_50 -> "D - between 25% and 50%";
+			case E_MORE_THAN_50 -> "E - more than 50%";
 		};
 	}
 

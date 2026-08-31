@@ -74,6 +74,8 @@ class ModelingPage extends FormPage {
 
 		PcrComplianceSection.create(editor, body, tk);
 
+		new VariabilitySection(editor).render(body, tk);
+
 		RefTableSection.create(DataSetType.SOURCE)
 				.withSupplier(() -> Epds.withOriginalEpds(epd))
 				.withEditor(editor)

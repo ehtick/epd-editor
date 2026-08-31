@@ -42,6 +42,17 @@ class PcrComplianceSection {
 			init != null && init.isUpstreamDataDeviating(),
 			b -> Epds.withPcrCompliance(epd).withUpstreamDataDeviating(b));
 
+		var svhc = Epds.getSvhc(epd);
+		var svhcBtn = UI.formCheckBox(comp, tk, M.SvhcPresent);
+		if (svhcBtn != null) {
+			svhcBtn.setToolTipText(M.SvhcPresentTooltip);
+			svhcBtn.setSelection(svhc != null && svhc.isPresent());
+			Controls.onSelect(svhcBtn, _ -> {
+				Epds.withSvhc(epd).withPresent(svhcBtn.getSelection());
+				editor.setDirty();
+			});
+		}
+
 		LangText.builder(editor, tk)
 			.nextMulti(M.Comment)
 			.val(init != null ? init.getComments() : null)

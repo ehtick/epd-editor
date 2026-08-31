@@ -201,6 +201,18 @@ public class M extends NLS {
 	public static String ProductFlow;
 	public static String ProductIds;
 	public static String EntityIds;
+	public static String ExpirationDate;
+	public static String ExpirationDateOfEPD;
+	public static String Svhc;
+	public static String SvhcPresent;
+	public static String SvhcPresentTooltip;
+	public static String Variability;
+	public static String ManufacturerVariability;
+	public static String ProductVariability;
+	public static String VariabilityDescription;
+	public static String VariabilityType;
+	public static String VariationPercent;
+	public static String VariationRange;
 	public static String ProductSystem;
 	public static String Project;
 	public static String Products;

@@ -273,6 +273,32 @@ class InfoPage extends FormPage {
 			}
 		}));
 
+		// expiration date of EPD
+		tk.createLabel(comp, M.ExpirationDateOfEPD)
+				.setToolTipText(Tooltips.EPD_ExpirationDateOfEPD);
+		var expDateBox = new DateTime(comp, SWT.DATE | SWT.DROP_DOWN);
+		var expDate = Epds.getExpirationDate(epd);
+		if (expDate != null) {
+			expDateBox.setDate(
+					expDate.getYear(),
+					expDate.getMonth() - 1,
+					expDate.getDay());
+		}
+		expDateBox.addSelectionListener(Controls.onSelect(_ -> {
+			var next = DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar();
+			next.setYear(expDateBox.getYear());
+			next.setMonth(expDateBox.getMonth() + 1);
+			next.setDay(expDateBox.getDay());
+			var prev = Epds.getExpirationDate(epd);
+			if (prev == null
+					|| prev.getYear() != next.getYear()
+					|| prev.getMonth() != next.getMonth()
+					|| prev.getDay() != next.getDay()) {
+				Epds.withExpirationDate(epd, next);
+				editor.setDirty();
+			}
+		}));
+
 		tb.nextMulti(M.TimeDescription, Tooltips.EPD_TimeDescription)
 				.val(time.getDescription())
 				.edit(time::withDescription)
