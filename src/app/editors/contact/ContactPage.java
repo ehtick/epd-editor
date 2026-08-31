@@ -80,6 +80,7 @@ class ContactPage extends FormPage {
 			info.withLogo(ref);
 			editor.setDirty();
 		});
+		EntityIdTable.create(editor, comp, tk);
 		UI.fileLink(contact, comp, tk);
 	}
 

@@ -21,6 +21,7 @@ public class Tooltips extends NLS {
 	public static String EPD_DeclaredProduct;
 	public static String EPD_ProductAmount;
 	public static String EPD_ProductIds;
+	public static String Contact_EntityIds;
 	public static String EPD_ProductUnit;
 	public static String EPD_ExternalDocumentationSources;
 	public static String EPD_UncertaintyMargins;

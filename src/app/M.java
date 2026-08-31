@@ -200,6 +200,7 @@ public class M extends NLS {
 	public static String Processes;
 	public static String ProductFlow;
 	public static String ProductIds;
+	public static String EntityIds;
 	public static String ProductSystem;
 	public static String Project;
 	public static String Products;
