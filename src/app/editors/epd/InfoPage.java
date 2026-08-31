@@ -248,21 +248,21 @@ class InfoPage extends FormPage {
 		// publication date
 		tk.createLabel(comp, M.PublicationDate)
 				.setToolTipText(Tooltips.EPD_PublicationDate);
-		var dateBox = new DateTime(comp, SWT.DATE | SWT.DROP_DOWN);
+		var pubBox = new DateTime(comp, SWT.DATE | SWT.DROP_DOWN);
 		var pubDate = Epds.getPublicationDate(epd);
 		if (pubDate != null) {
-			dateBox.setDate(
+			pubBox.setDate(
 					pubDate.getYear(),
 					pubDate.getMonth() - 1,
 					pubDate.getDay());
 		}
-		dateBox.addSelectionListener(Controls.onSelect(_ -> {
+		pubBox.addSelectionListener(Controls.onSelect(_ -> {
 			// the date-box receives selection events by default,
 			// the check if the value really changed here
 			var next = DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar();
-			next.setYear(dateBox.getYear());
-			next.setMonth(dateBox.getMonth() + 1);
-			next.setDay(dateBox.getDay());
+			next.setYear(pubBox.getYear());
+			next.setMonth(pubBox.getMonth() + 1);
+			next.setDay(pubBox.getDay());
 			var prev = Epds.getPublicationDate(epd);
 			if (prev == null
 					|| prev.getYear() != next.getYear()
@@ -276,19 +276,19 @@ class InfoPage extends FormPage {
 		// expiration date of EPD
 		tk.createLabel(comp, M.ExpirationDateOfEPD)
 				.setToolTipText(Tooltips.EPD_ExpirationDateOfEPD);
-		var expDateBox = new DateTime(comp, SWT.DATE | SWT.DROP_DOWN);
+		var expBox = new DateTime(comp, SWT.DATE | SWT.DROP_DOWN);
 		var expDate = Epds.getExpirationDate(epd);
 		if (expDate != null) {
-			expDateBox.setDate(
+			expBox.setDate(
 					expDate.getYear(),
 					expDate.getMonth() - 1,
 					expDate.getDay());
 		}
-		expDateBox.addSelectionListener(Controls.onSelect(_ -> {
+		expBox.addSelectionListener(Controls.onSelect(_ -> {
 			var next = DatatypeFactory.newDefaultInstance().newXMLGregorianCalendar();
-			next.setYear(expDateBox.getYear());
-			next.setMonth(expDateBox.getMonth() + 1);
-			next.setDay(expDateBox.getDay());
+			next.setYear(expBox.getYear());
+			next.setMonth(expBox.getMonth() + 1);
+			next.setDay(expBox.getDay());
 			var prev = Epds.getExpirationDate(epd);
 			if (prev == null
 					|| prev.getYear() != next.getYear()
@@ -299,6 +299,7 @@ class InfoPage extends FormPage {
 			}
 		}));
 
+		// description
 		tb.nextMulti(M.TimeDescription, Tooltips.EPD_TimeDescription)
 				.val(time.getDescription())
 				.edit(time::withDescription)

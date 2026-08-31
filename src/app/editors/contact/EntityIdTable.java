@@ -57,7 +57,9 @@ class EntityIdTable {
 	}
 
 	protected void onCreate() {
-		var id = new EpdEntityId();
+		var id = new EpdEntityId()
+			.withType("Type of ID")
+			.withValue("Value of ID");
 		Contacts.withEpdEntityIds(contact).add(id);
 		setInput();
 		editor.setDirty();

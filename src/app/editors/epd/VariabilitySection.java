@@ -33,11 +33,8 @@ class VariabilitySection {
 
 	void render(Composite body, FormToolkit tk) {
 		var comp = UI.formSection(body, tk, M.Variability);
-		var control = comp.getClient();
-		if (control instanceof Composite clientComp) {
-			var layout = (GridLayout) clientComp.getLayout();
-			layout.numColumns = 4;
-		}
+		var layout = (GridLayout) comp.getLayout();
+		layout.numColumns = 4;
 
 		var v = Epds.getVariability(epd);
 
