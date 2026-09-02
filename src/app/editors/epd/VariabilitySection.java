@@ -58,25 +58,19 @@ class VariabilitySection {
 					: "";
 			}
 		});
-		manuCombo.setInput(nullable(EpdManufacturerVariability.VariabilityType.values()));
+		manuCombo.setInput(nullableOf(EpdManufacturerVariability.VariabilityType.values()));
 		var manuInitType = (v != null && v.getManufacturerVariability() != null)
 			? v.getManufacturerVariability().getType()
 			: null;
 		manuCombo.setSelection(new StructuredSelection(manuInitType != null ? manuInitType : NONE));
 		manuCombo.addSelectionChangedListener(e -> {
-			Object selected = Viewers.getFirst(e.getSelection());
-			EpdManufacturerVariability.VariabilityType type = selected instanceof EpdManufacturerVariability.VariabilityType t
+			var obj = Viewers.getFirst(e.getSelection());
+			var type = obj instanceof EpdManufacturerVariability.VariabilityType t
 				? t
 				: null;
-			var variability = Epds.withVariability(epd);
-			var mv = variability.getManufacturerVariability();
-			if (mv == null) {
-				if (type == null)
-					return;
-				mv = new EpdManufacturerVariability();
-				variability.withManufacturerVariability(mv);
-			}
-			mv.withType(type);
+			Epds.withVariability(epd)
+				.withManufacturerVariability()
+				.withType(type);
 			editor.setDirty();
 		});
 
@@ -92,25 +86,19 @@ class VariabilitySection {
 			}
 		});
 
-		prodCombo.setInput(nullable(EpdProductVariability.VariabilityType.values()));
+		prodCombo.setInput(nullableOf(EpdProductVariability.VariabilityType.values()));
 		var pInitType = (v != null && v.getProductVariability() != null)
 			? v.getProductVariability().getType()
 			: null;
 		prodCombo.setSelection(new StructuredSelection(pInitType != null ? pInitType : NONE));
 		prodCombo.addSelectionChangedListener(e -> {
-			Object selected = Viewers.getFirst(e.getSelection());
-			EpdProductVariability.VariabilityType type = selected instanceof EpdProductVariability.VariabilityType t
+			var obj = Viewers.getFirst(e.getSelection());
+			var type = obj instanceof EpdProductVariability.VariabilityType t
 				? t
 				: null;
-			var variability = Epds.withVariability(epd);
-			var pv = variability.getProductVariability();
-			if (pv == null) {
-				if (type == null)
-					return;
-				pv = new EpdProductVariability();
-				variability.withProductVariability(pv);
-			}
-			pv.withType(type);
+			Epds.withVariability(epd)
+				.withProductVariability()
+				.withType(type);
 			editor.setDirty();
 		});
 
@@ -121,15 +109,9 @@ class VariabilitySection {
 			: null;
 		DoubleText.on(editor, comp, tk)
 			.withInitial(manuVar)
-			.onChange(val -> {
-				var variability = Epds.withVariability(epd);
-				var mv = variability.getManufacturerVariability();
-				if (mv == null) {
-					mv = new EpdManufacturerVariability();
-					variability.withManufacturerVariability(mv);
-				}
-				mv.withVariation(val);
-			})
+			.onChange(val -> Epds.withVariability(epd)
+				.withManufacturerVariability()
+				.withVariation(val))
 			.render();
 
 		var prodVar = (v != null && v.getProductVariability() != null)
@@ -137,15 +119,9 @@ class VariabilitySection {
 			: null;
 		DoubleText.on(editor, comp, tk)
 			.withInitial(prodVar)
-			.onChange(val -> {
-				var variability = Epds.withVariability(epd);
-				var pv = variability.getProductVariability();
-				if (pv == null) {
-					pv = new EpdProductVariability();
-					variability.withProductVariability(pv);
-				}
-				pv.withVariation(val);
-			})
+			.onChange(val -> Epds.withVariability(epd)
+				.withProductVariability()
+				.withVariation(val))
 			.render();
 
 		// range
@@ -161,23 +137,17 @@ class VariabilitySection {
 					: "";
 			}
 		});
-		manuRangeCombo.setInput(nullable(EpdVariationRange.values()));
+		manuRangeCombo.setInput(nullableOf(EpdVariationRange.values()));
 		var manuInitRange = (v != null && v.getManufacturerVariability() != null)
 			? v.getManufacturerVariability().getRange()
 			: null;
 		manuRangeCombo.setSelection(new StructuredSelection(manuInitRange != null ? manuInitRange : NONE));
 		manuRangeCombo.addSelectionChangedListener(e -> {
-			Object selected = Viewers.getFirst(e.getSelection());
-			EpdVariationRange range = selected instanceof EpdVariationRange r ? r : null;
-			var variability = Epds.withVariability(epd);
-			var mv = variability.getManufacturerVariability();
-			if (mv == null) {
-				if (range == null)
-					return;
-				mv = new EpdManufacturerVariability();
-				variability.withManufacturerVariability(mv);
-			}
-			mv.withRange(range);
+			var obj = Viewers.getFirst(e.getSelection());
+			var range = obj instanceof EpdVariationRange r ? r : null;
+			Epds.withVariability(epd)
+				.withManufacturerVariability()
+				.withRange(range);
 			editor.setDirty();
 		});
 
@@ -192,23 +162,17 @@ class VariabilitySection {
 					: "";
 			}
 		});
-		prodRangeCombo.setInput(nullable(EpdVariationRange.values()));
+		prodRangeCombo.setInput(nullableOf(EpdVariationRange.values()));
 		var pInitRange = (v != null && v.getProductVariability() != null)
 			? v.getProductVariability().getRange()
 			: null;
 		prodRangeCombo.setSelection(new StructuredSelection(pInitRange != null ? pInitRange : NONE));
 		prodRangeCombo.addSelectionChangedListener(e -> {
-			Object selected = Viewers.getFirst(e.getSelection());
-			EpdVariationRange range = selected instanceof EpdVariationRange r ? r : null;
-			var variability = Epds.withVariability(epd);
-			var pv = variability.getProductVariability();
-			if (pv == null) {
-				if (range == null)
-					return;
-				pv = new EpdProductVariability();
-				variability.withProductVariability(pv);
-			}
-			pv.withRange(range);
+			var obj = Viewers.getFirst(e.getSelection());
+			var range = obj instanceof EpdVariationRange r ? r : null;
+			Epds.withVariability(epd)
+				.withProductVariability()
+				.withRange(range);
 			editor.setDirty();
 		});
 
@@ -225,8 +189,8 @@ class VariabilitySection {
 			.draw(textComp);
 	}
 
-	private static <T> Object[] nullable(T[] values) {
-		var list = new ArrayList<Object>();
+	private static <T> Object[] nullableOf(T[] values) {
+		var list = new ArrayList<>();
 		list.add(NONE);
 		Collections.addAll(list, values);
 		return list.toArray();
