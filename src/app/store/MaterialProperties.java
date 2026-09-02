@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import app.App;
 import epd.model.MaterialProperty;
+import epd.util.Json;
 
 public class MaterialProperties {
 

@@ -5,7 +5,7 @@ import java.io.File;
 import org.openlca.commons.Copyable;
 import org.openlca.ilcd.epd.EpdProfiles;
 
-import app.store.Json;
+import epd.util.Json;
 
 public final class AppSettings implements Copyable<AppSettings> {
 
