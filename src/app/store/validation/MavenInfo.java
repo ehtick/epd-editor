@@ -1,5 +1,6 @@
 package app.store.validation;
 
+import java.io.File;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -73,6 +74,41 @@ public record MavenInfo(String name, String version, long timestamp) {
 			return Res.ok(list);
 		} catch (Exception e) {
 			return Res.error("Failed to read response", e);
+		}
+	}
+
+	public String fileName() {
+		return name + "-" + version + ".jar";
+	}
+
+	/// Returns `true` when this is a validation profile for EPDs. This is probably
+	/// the case when the name of the profile starts with `EPD-`.
+	public boolean isForEpd() {
+		return name != null && name.startsWith("EPD-");
+	}
+
+	public Res<File> downloadTo(File targetDir) {
+		var url = "https://repo1.maven.org/maven2/"
+			+ g.replace('.', '/') + "/" + name + "/" + version + "/" + fileName();
+		var client = HttpClient.newBuilder()
+			.version(HttpClient.Version.HTTP_2)
+			.followRedirects(HttpClient.Redirect.NORMAL)
+			.build();
+		try (client) {
+			var req = HttpRequest.newBuilder()
+				.uri(URI.create(url))
+				.header("Accept", "application/java-archive")
+				.GET()
+				.build();
+			var handler = HttpResponse.BodyHandlers.ofFile(
+				targetDir.toPath().resolve(fileName()));
+			var resp = client.send(req, handler);
+			return resp.statusCode() == 200
+				? Res.ok(resp.body().toFile())
+				: Res.error("Failed to download validation profile: "
+				+ resp.statusCode());
+		} catch (Exception e) {
+			return Res.error("Failed to download validation profile from: " + url, e);
 		}
 	}
 }
