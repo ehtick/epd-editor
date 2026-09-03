@@ -148,7 +148,7 @@ public class ExportDialog extends Wizard {
 			text.setBackground(Colors.white());
 			UI.gridData(text, true, false);
 			Button browseButn = new Button(browseComp, SWT.NONE);
-			browseButn.setText("Browse");
+			browseButn.setText(M.Browse);
 			Controls.onSelect(browseButn, _ -> {
 				String name = App.s(ref.getName()).replaceAll("\\W", "_");
 				if (Strings.isNullOrEmpty(name)) {

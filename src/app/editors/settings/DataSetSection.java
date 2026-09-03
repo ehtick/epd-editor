@@ -112,7 +112,7 @@ class DataSetSection {
 	}
 
 	private void hideCategoryIdsCheck(Composite comp, FormToolkit tk) {
-		var check = UI.formCheckBox(comp, tk, "Hide category IDs");
+		var check = UI.formCheckBox(comp, tk, M.HideCategoryIds);
 		check.setSelection(settings().hideCategoryIds);
 		Controls.onSelect(check, _ -> {
 			settings().hideCategoryIds = check.getSelection();
@@ -193,7 +193,7 @@ class DataSetSection {
 		}
 		File file = new File(dir, "questions.json");
 
-		UI.formLabel(comp, tk, "Q-Metadata questions");
+		UI.formLabel(comp, tk, M.QMetadataQuestions);
 		Composite inner = tk.createComposite(comp);
 		UI.innerGrid(inner, 2);
 		Text text = tk.createText(inner, "");
@@ -203,7 +203,7 @@ class DataSetSection {
 			text.setText("~/.epd_editor/q-metatdata/questions.json");
 		}
 
-		Button btn = tk.createButton(inner, "Browse ...", SWT.NONE);
+		Button btn = tk.createButton(inner, M.Browse, SWT.NONE);
 		Controls.onSelect(btn, _ -> {
 			File impFile = FileChooser.open("*.json");
 			if (impFile == null)

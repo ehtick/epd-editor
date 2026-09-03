@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import app.M;
 import app.rcp.Icon;
 import app.util.Actions;
 import app.util.UI;
@@ -49,7 +50,7 @@ public final class TableClipboard {
 			}
 		});
 		ImageDescriptor image = Icon.COPY.des();
-		return Actions.create("Copy", image, () -> copy(table));
+		return Actions.create(M.Copy, image, () -> copy(table));
 	}
 
 	/**
@@ -63,7 +64,7 @@ public final class TableClipboard {
 			}
 		});
 		ImageDescriptor image = Icon.PASTE.des();
-		return Actions.create("Paste", image, () -> paste(table, fn));
+		return Actions.create(M.Paste, image, () -> paste(table, fn));
 	}
 
 	private static void copy(Table table) {

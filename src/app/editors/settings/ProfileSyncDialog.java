@@ -90,7 +90,7 @@ class ProfileSyncDialog extends FormDialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText("Available validation profiles");
+		shell.setText(M.AvailableValidationProfiles);
 	}
 
 	@Override

@@ -57,7 +57,7 @@ class ValidationSection {
 			this::selectActive);
 		Action add = Actions.create(M.Add, Icon.ADD.des(), this::add);
 		Action del = Actions.create(M.Remove, Icon.DELETE.des(), this::remove);
-		Action sync = Actions.create("Search updates", Icon.RELOAD.des(), () -> {
+		Action sync = Actions.create(M.SearchUpdates, Icon.RELOAD.des(), () -> {
 			var synced = ProfileSyncDialog.sync().orElse(null);
 			if (synced == null)
 				return;
