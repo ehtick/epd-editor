@@ -2,6 +2,8 @@ package app.editors.epd;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -45,64 +47,34 @@ class VariabilitySection {
 		UI.formLabel(comp, tk, M.ProductVariability);
 		var v = Epds.getVariability(epd);
 
-		// type combos
+		// manufacturer variability type
 		UI.formLabel(comp, tk, M.Type);
-		var manuCombo = new ComboViewer(comp, SWT.READ_ONLY);
-		UI.gridData(manuCombo.getControl(), true, false);
-		manuCombo.setContentProvider(ArrayContentProvider.getInstance());
-		manuCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object e) {
-				return e instanceof EpdManufacturerVariability.VariabilityType type
-					? Labels.get(type)
-					: "";
-			}
-		});
-		manuCombo.setInput(nullableOf(EpdManufacturerVariability.VariabilityType.values()));
-		var manuInitType = (v != null && v.getManufacturerVariability() != null)
-			? v.getManufacturerVariability().getType()
-			: null;
-		manuCombo.setSelection(new StructuredSelection(manuInitType != null ? manuInitType : NONE));
-		manuCombo.addSelectionChangedListener(e -> {
-			var obj = Viewers.getFirst(e.getSelection());
-			var type = obj instanceof EpdManufacturerVariability.VariabilityType t
-				? t
-				: null;
-			Epds.withVariability(epd)
+		makeEnumCombo(
+			comp,
+			EpdManufacturerVariability.VariabilityType.class,
+			EpdManufacturerVariability.VariabilityType.values(),
+			Labels::get,
+			v != null && v.getManufacturerVariability() != null
+				? v.getManufacturerVariability().getType()
+				: null,
+			type -> Epds.withVariability(epd)
 				.withManufacturerVariability()
-				.withType(type);
-			editor.setDirty();
-		});
+				.withType(type));
 
-		var prodCombo = new ComboViewer(comp, SWT.READ_ONLY);
-		UI.gridData(prodCombo.getControl(), true, false);
-		prodCombo.setContentProvider(ArrayContentProvider.getInstance());
-		prodCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object e) {
-				return e instanceof EpdProductVariability.VariabilityType type
-					? Labels.get(type)
-					: "";
-			}
-		});
-
-		prodCombo.setInput(nullableOf(EpdProductVariability.VariabilityType.values()));
-		var pInitType = (v != null && v.getProductVariability() != null)
-			? v.getProductVariability().getType()
-			: null;
-		prodCombo.setSelection(new StructuredSelection(pInitType != null ? pInitType : NONE));
-		prodCombo.addSelectionChangedListener(e -> {
-			var obj = Viewers.getFirst(e.getSelection());
-			var type = obj instanceof EpdProductVariability.VariabilityType t
-				? t
-				: null;
-			Epds.withVariability(epd)
+		// product variability type
+		makeEnumCombo(
+			comp,
+			EpdProductVariability.VariabilityType.class,
+			EpdProductVariability.VariabilityType.values(),
+			Labels::get,
+			v != null && v.getProductVariability() != null
+				? v.getProductVariability().getType()
+				: null,
+			type -> Epds.withVariability(epd)
 				.withProductVariability()
-				.withType(type);
-			editor.setDirty();
-		});
+				.withType(type));
 
-		//  variation (%)
+		//  manufacturer variation (%)
 		UI.formLabel(comp, tk, M.VariationPercent);
 		var manuVar = (v != null && v.getManufacturerVariability() != null)
 			? v.getManufacturerVariability().getVariation()
@@ -114,6 +86,7 @@ class VariabilitySection {
 				.withVariation(val))
 			.render();
 
+		// product variation (%)
 		var prodVar = (v != null && v.getProductVariability() != null)
 			? v.getProductVariability().getVariation()
 			: null;
@@ -124,57 +97,32 @@ class VariabilitySection {
 				.withVariation(val))
 			.render();
 
-		// range
+		// manufacturer range
 		UI.formLabel(comp, tk, M.VariationRange);
-		var manuRangeCombo = new ComboViewer(comp, SWT.READ_ONLY);
-		UI.gridData(manuRangeCombo.getControl(), true, false);
-		manuRangeCombo.setContentProvider(ArrayContentProvider.getInstance());
-		manuRangeCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return element instanceof EpdVariationRange range
-					? Labels.get(range)
-					: "";
-			}
-		});
-		manuRangeCombo.setInput(nullableOf(EpdVariationRange.values()));
-		var manuInitRange = (v != null && v.getManufacturerVariability() != null)
-			? v.getManufacturerVariability().getRange()
-			: null;
-		manuRangeCombo.setSelection(new StructuredSelection(manuInitRange != null ? manuInitRange : NONE));
-		manuRangeCombo.addSelectionChangedListener(e -> {
-			var obj = Viewers.getFirst(e.getSelection());
-			var range = obj instanceof EpdVariationRange r ? r : null;
-			Epds.withVariability(epd)
+		makeEnumCombo(
+			comp,
+			EpdVariationRange.class,
+			EpdVariationRange.values(),
+			Labels::get,
+			v != null && v.getManufacturerVariability() != null
+				? v.getManufacturerVariability().getRange()
+				: null,
+			range -> Epds.withVariability(epd)
 				.withManufacturerVariability()
-				.withRange(range);
-			editor.setDirty();
-		});
+				.withRange(range));
 
-		var prodRangeCombo = new ComboViewer(comp, SWT.READ_ONLY);
-		UI.gridData(prodRangeCombo.getControl(), true, false);
-		prodRangeCombo.setContentProvider(ArrayContentProvider.getInstance());
-		prodRangeCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return element instanceof EpdVariationRange range
-					? Labels.get(range)
-					: "";
-			}
-		});
-		prodRangeCombo.setInput(nullableOf(EpdVariationRange.values()));
-		var pInitRange = (v != null && v.getProductVariability() != null)
-			? v.getProductVariability().getRange()
-			: null;
-		prodRangeCombo.setSelection(new StructuredSelection(pInitRange != null ? pInitRange : NONE));
-		prodRangeCombo.addSelectionChangedListener(e -> {
-			var obj = Viewers.getFirst(e.getSelection());
-			var range = obj instanceof EpdVariationRange r ? r : null;
-			Epds.withVariability(epd)
+		// product range
+		makeEnumCombo(
+			comp,
+			EpdVariationRange.class,
+			EpdVariationRange.values(),
+			Labels::get,
+			v != null && v.getProductVariability() != null
+				? v.getProductVariability().getRange()
+				: null,
+			range ->	Epds.withVariability(epd)
 				.withProductVariability()
-				.withRange(range);
-			editor.setDirty();
-		});
+				.withRange(range));
 
 		UI.formLabel(comp, tk, M.VariabilityDescription);
 		var textComp = tk.createComposite(comp);
@@ -187,6 +135,51 @@ class VariabilitySection {
 			.val(descriptions)
 			.edit(() -> Epds.withVariability(epd).withDescriptions())
 			.draw(textComp);
+	}
+
+
+	private <T extends Enum<T>> void makeEnumCombo(
+		Composite comp,
+		Class<T> type,
+		Enum<T>[] items,
+		Function<T, String> labelProvider,
+		T current,
+		Consumer<T> onChange
+	) {
+
+		var combo = new ComboViewer(comp, SWT.READ_ONLY);
+		UI.gridData(combo.getControl(), true, false);
+		combo.setContentProvider(
+			ArrayContentProvider.getInstance());
+
+		combo.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object o) {
+				if (o == null || o == NONE)
+					return "";
+				return type.isAssignableFrom(o.getClass())
+					? labelProvider.apply(type.cast(o))
+					: "";
+			}
+		});
+
+		combo.setInput(nullableOf(items));
+		var initial = current != null
+			? current
+			: NONE;
+		combo.setSelection(new StructuredSelection(initial));
+
+		combo.addSelectionChangedListener(e -> {
+			var obj = Viewers.getFirst(e.getSelection());
+			if (obj == null
+				|| obj == NONE
+				|| !type.isAssignableFrom(obj.getClass())) {
+				onChange.accept(null);
+			} else {
+				onChange.accept(type.cast(obj));
+			}
+			editor.setDirty();
+		});
 	}
 
 	private static <T> Object[] nullableOf(T[] values) {

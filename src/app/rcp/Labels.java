@@ -66,20 +66,20 @@ public class Labels {
 		};
 	}
 
-	public static String get(EpdManufacturerVariability.VariabilityType mtype) {
-		if (mtype == null)
+	public static String get(EpdManufacturerVariability.VariabilityType t) {
+		if (t == null)
 			return "";
-		return switch (mtype) {
+		return switch (t) {
 			case SINGLE_PRODUCTION_SITE -> M.SingleProductionSite;
 			case SINGLE_MANUFACTURER_MULTIPLE_SITES -> M.SingleManufacturerMultipleSites;
 			case MULTIPLE_MANUFACTURERS -> M.MultipleManufacturers;
 		};
 	}
 
-	public static String get(EpdProductVariability.VariabilityType ptype) {
-		if (ptype == null)
+	public static String get(EpdProductVariability.VariabilityType t) {
+		if (t == null)
 			return "";
-		return switch (ptype) {
+		return switch (t) {
 			case SINGLE_PRODUCT -> M.SingleProduct;
 			case RANGE_OF_PRODUCTS -> M.RangeOfProducts;
 		};
