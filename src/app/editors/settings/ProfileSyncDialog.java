@@ -3,7 +3,6 @@ package app.editors.settings;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.openlca.commons.Res;
 import org.openlca.commons.Strings;
 
 import app.App;
@@ -33,6 +33,7 @@ import app.util.MsgBox;
 import app.util.Tables;
 import app.util.UI;
 import app.util.Viewers;
+import epd.util.Dirs;
 
 @NullMarked
 class ProfileSyncDialog extends FormDialog {
@@ -59,7 +60,7 @@ class ProfileSyncDialog extends FormDialog {
 
 		var newInfos = res.value().stream()
 			.filter(info -> info.isForEpd() && !existing.contains(info.fileName()))
-			.sorted((i, j) -> Strings.compareNatural(i.fileName(), j.fileName()))
+			.sorted((i, j) -> Strings.compareNatural(j.fileName(), i.fileName()))
 			.toList();
 
 		if (newInfos.isEmpty()) {
@@ -89,12 +90,12 @@ class ProfileSyncDialog extends FormDialog {
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		shell.setText(M.ValidationProfiles);
+		shell.setText("Available validation profiles");
 	}
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(600, 400);
+		return new Point(650, 500);
 	}
 
 	@Override
@@ -104,14 +105,14 @@ class ProfileSyncDialog extends FormDialog {
 		if (okBtn != null) {
 			okBtn.setEnabled(false);
 		}
-		createButton(comp, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
+		createButton(
+			comp, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
 	}
 
 	@Override
-	protected void createFormContent(IManagedForm mform) {
-		var tk = mform.getToolkit();
-		UI.formHeader(mform, M.ValidationProfiles);
-		var body = UI.formBody(mform.getForm(), tk);
+	protected void createFormContent(IManagedForm form) {
+		var tk = form.getToolkit();
+		var body = UI.formBody(form.getForm(), tk);
 		UI.gridLayout(body, 1);
 
 		table = Tables.createViewer(body, M.Name, M.Version, M.Download);
@@ -129,9 +130,9 @@ class ProfileSyncDialog extends FormDialog {
 				selected.add(info);
 			}
 			table.refresh();
-			var downloadBtn = getButton(IDialogConstants.OK_ID);
-			if (downloadBtn != null) {
-				downloadBtn.setEnabled(!selected.isEmpty());
+			var btn = getButton(IDialogConstants.OK_ID);
+			if (btn != null) {
+				btn.setEnabled(!selected.isEmpty());
 			}
 		});
 	}
@@ -141,38 +142,26 @@ class ProfileSyncDialog extends FormDialog {
 		if (selected.isEmpty())
 			return;
 
-		String error = App.exec("Downloading validation profiles ...", () -> {
+		Res<Void> res = App.exec("Downloading validation profiles ...", () -> {
+			Path tempDir = null;
 			try {
-				var tempDir = Files.createTempDirectory("epd_editor_profiles");
-				try {
-					for (var info : selected) {
-						var res = info.downloadTo(tempDir.toFile());
-						if (res.isError()) {
-							return "Failed to download " + info.fileName() + ": " + res.error();
-						}
-						var file = res.value();
-						var target = ValidationProfiles.put(file);
-						if (target == null) {
-							return "Failed to save profile " + info.fileName();
-						}
-					}
-					return null;
-				} finally {
-					try (var stream = Files.walk(tempDir)) {
-						stream.sorted(Comparator.reverseOrder())
-							.map(Path::toFile)
-							.forEach(File::delete);
-					} catch (Exception e) {
-						// ignore cleanup errors
-					}
+				tempDir = Files.createTempDirectory("epd_editor_profiles");
+				for (var info : selected) {
+					var f = info.downloadTo(tempDir.toFile());
+					if (f.isError())
+						return f.wrapError("Failed to download validation profile");
+					ValidationProfiles.put(f.value());
 				}
+				return Res.ok();
 			} catch (Exception e) {
-				return "Error downloading profiles: " + e.getMessage();
+				return Res.error("Error while downloading validation profiles", e);
+			} finally {
+				Dirs.delete(tempDir);
 			}
 		});
 
-		if (error != null) {
-			MsgBox.error("Download failed", error);
+		if (res.isError()) {
+			MsgBox.error("Download failed", res.error());
 			return;
 		}
 
@@ -203,5 +192,4 @@ class ProfileSyncDialog extends FormDialog {
 			};
 		}
 	}
-
 }

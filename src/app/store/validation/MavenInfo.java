@@ -86,7 +86,7 @@ public record MavenInfo(String name, String version, long timestamp) {
 	/// Returns `true` when this is a validation profile for EPDs. This is probably
 	/// the case when the name of the profile starts with `EPD-`.
 	public boolean isForEpd() {
-		return name != null && name.startsWith("EPD-");
+		return name.startsWith("EPD-");
 	}
 
 	public Res<File> downloadTo(File targetDir) {
