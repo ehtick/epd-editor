@@ -65,8 +65,8 @@ class ValidationSection {
 			infos.addAll(synced);
 			table.setInput(synced);
 		});
-		Actions.bind(table, ref, add, del);
-		Actions.bind(section, ref, add, del);
+		Actions.bind(table, ref, add, del, sync);
+		Actions.bind(section, ref, add, del, sync);
 	}
 
 	private void add() {
