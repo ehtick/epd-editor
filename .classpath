@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="tests"/>
+	<classpathentry exported="true" kind="lib" path="libs/jspecify-1.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/angus-activation-2.0.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/annotations-3.0.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/aopalliance-repackaged-3.0.5.jar"/>

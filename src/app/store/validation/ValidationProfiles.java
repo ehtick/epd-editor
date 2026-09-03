@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,7 @@ import com.okworx.ilcd.validation.profile.ProfileManager;
 
 import app.App;
 
+@NullMarked
 public final class ValidationProfiles {
 
 	private ValidationProfiles() {
@@ -34,6 +37,7 @@ public final class ValidationProfiles {
 			.collect(Collectors.toList());
 	}
 
+	@Nullable
 	public static File put(File file) {
 		if (!isJar(file))
 			return null;
@@ -54,11 +58,10 @@ public final class ValidationProfiles {
 	}
 
 	public static boolean contains(File file) {
-		if (file == null)
-			return false;
 		return find(file.getName()) != null;
 	}
 
+	@Nullable
 	public static Profile getActive() {
 		File file = find(App.settings().validationProfile);
 		if (file == null)
@@ -73,7 +76,8 @@ public final class ValidationProfiles {
 		}
 	}
 
-	private static File find(String fileName) {
+	@Nullable
+	private static File find(@Nullable String fileName) {
 		if (fileName == null)
 			return null;
 		for (File f : getFiles()) {
@@ -88,7 +92,7 @@ public final class ValidationProfiles {
 	}
 
 	private static boolean isJar(File file) {
-		if (file == null || !file.exists() || !file.isFile())
+		if (!file.exists() || !file.isFile())
 			return false;
 		return file.getName().endsWith(".jar");
 	}

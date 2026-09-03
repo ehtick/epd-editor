@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+@NullMarked
 public final class Json {
 
 	private Json() {
@@ -26,8 +29,8 @@ public final class Json {
 
 	public static void write(Object obj, File file) {
 		try (var fos = new FileOutputStream(file);
-				 var writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-				 var buffer = new BufferedWriter(writer)) {
+		     var writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+		     var buffer = new BufferedWriter(writer)) {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			String string = gson.toJson(obj);
 			buffer.write(string);
@@ -37,6 +40,7 @@ public final class Json {
 		}
 	}
 
+	@Nullable
 	public static <T> T read(File file, Class<T> clazz) {
 		try (FileInputStream fis = new FileInputStream(file)) {
 			return read(fis, clazz);
@@ -47,6 +51,7 @@ public final class Json {
 		}
 	}
 
+	@Nullable
 	public static <T> T read(InputStream stream, Class<T> clazz) {
 		try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
 			Gson gson = new Gson();
@@ -58,21 +63,30 @@ public final class Json {
 		}
 	}
 
-	public static JsonObject getObject(JsonObject obj, String property) {
+	@Nullable
+	public static JsonObject getObject(
+		@Nullable JsonObject obj, @Nullable String property
+	) {
 		var entry = getElement(obj, property);
 		return entry != null && entry.isJsonObject()
 			? entry.getAsJsonObject()
 			: null;
 	}
 
-	public static JsonArray getArray(JsonObject obj, String property) {
+	@Nullable
+	public static JsonArray getArray(
+		@Nullable JsonObject obj, @Nullable String property
+	) {
 		var entry = getElement(obj, property);
 		return entry != null && entry.isJsonArray()
 			? entry.getAsJsonArray()
 			: null;
 	}
 
-	public static String getString(JsonObject obj, String property) {
+	@Nullable
+	public static String getString(
+		@Nullable JsonObject obj, @Nullable String property
+	) {
 		var prim = getPrimitive(obj, property);
 		if (prim == null)
 			return null;
@@ -81,7 +95,9 @@ public final class Json {
 			: null;
 	}
 
-	public static long getLong(JsonObject obj, String property, long defaultVal) {
+	public static long getLong(
+		@Nullable JsonObject obj, @Nullable String property, long defaultVal
+	) {
 		var prim = getPrimitive(obj, property);
 		if (prim == null)
 			return defaultVal;
@@ -90,14 +106,19 @@ public final class Json {
 			: defaultVal;
 	}
 
-	private static JsonPrimitive getPrimitive(JsonObject obj, String property) {
+	@Nullable
+	private static JsonPrimitive getPrimitive(
+		@Nullable JsonObject obj, @Nullable String property) {
 		var entry = getElement(obj, property);
 		return entry != null && entry.isJsonPrimitive()
 			? entry.getAsJsonPrimitive()
 			: null;
 	}
 
-	private static JsonElement getElement(JsonObject obj, String property) {
+	@Nullable
+	private static JsonElement getElement(
+		@Nullable JsonObject obj, @Nullable String property
+	) {
 		return obj != null && property != null
 			? obj.get(property)
 			: null;

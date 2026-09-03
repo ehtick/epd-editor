@@ -8,6 +8,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
 import org.openlca.commons.Res;
 import org.openlca.commons.Strings;
 
@@ -16,11 +17,12 @@ import com.google.gson.JsonElement;
 
 import epd.util.Json;
 
+@NullMarked
 public record MavenInfo(String name, String version, long timestamp) {
 
 	private static final String g = "com.okworx.ilcd.validation.profiles";
 
-	public static Res<List<MavenInfo>> fetch() {
+	public static Res<List<MavenInfo>> fetchAll() {
 		var url = "https://search.maven.org/solrsearch/select?q=g:" + g + "&wt=json";
 		var client = HttpClient.newBuilder()
 			.version(HttpClient.Version.HTTP_2)
